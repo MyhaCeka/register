@@ -113,9 +113,8 @@
             </div>
 
             <div class="form-group">
-                <label for="phone">Номер телефона</label>
-                <input type="tel" id="phone" name="phone" required pattern="[+]?[0-9]{11,}" title="Номер телефона в формате +79001234567">
-                <div class="error">Пожалуйста, введите корректный номер телефона</div>
+                <label for="phone">Номер телефона</label>                <input type="tel" id="phone" name="phone" required pattern="^\+380\d{9}$" title="Номер телефона в формате +380XXXXXXXXX">
+                <div class="error">Пожалуйста, введите корректный номер телефона в формате +380XXXXXXXXX</div>
             </div>
 
             <button type="submit">Зарегистрироваться</button>
@@ -131,18 +130,32 @@
         document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
         document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
         document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
-        document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
-
-        // Форматирование номера телефона
+        document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);        // Форматирование номера телефона
         const phoneInput = document.getElementById('phone');
         phoneInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 0 && !value.startsWith('380')) {
-                value = '380' + value;
+            let value = e.target.value.replace(/\D/g, ''); // Удаляем все нецифровые символы
+            
+            // Ограничиваем длину до 12 цифр (380 + 9 цифр)
+            if (value.length > 12) {
+                value = value.substring(0, 12);
             }
+            
+            // Добавляем префикс 380, если его нет
+            if (value && !value.startsWith('380')) {
+                if (value.startsWith('80')) {
+                    value = '3' + value;
+                } else if (value.startsWith('0')) {
+                    value = '38' + value;
+                } else {
+                    value = '380' + value;
+                }
+            }
+            
+            // Добавляем + в начало
             if (value) {
                 value = '+' + value;
             }
+            
             e.target.value = value;
         });
 
@@ -176,10 +189,8 @@
             if (!formData.lastName.match(/^[А-Яа-яЁё\s]{2,}$/)) {
                 alert('Пожалуйста, введите корректную фамилию');
                 return false;
-            }
-
-            if (!formData.phone.match(/^\+{11,}$/)) {
-                alert('Пожалуйста, введите корректный номер телефона');
+            }            if (!formData.phone.match(/^\+380\d{9}$/)) {
+                alert('Пожалуйста, введите корректный номер телефона в формате +380XXXXXXXXX');
                 return false;
             }
 
