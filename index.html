@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
+<head>    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="googlebot" content="noindex,nofollow">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Регистрация</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -90,10 +95,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Регистрация</h1>
-        <form id="registrationForm" onsubmit="return handleSubmit(event)" autocomplete="off">
+        <h1>Регистрация</h1>        <form id="registrationForm" onsubmit="return handleSubmit(event)" autocomplete="off" spellcheck="false">
+            <input type="hidden" name="hidden" value="something">
             <div class="form-group">
-                <label for="firstName">Имя</label>                <input type="text" id="firstName" name="firstName" required pattern="[А-Яа-яЁё\s]{2,}" title="Минимум 2 буквы, только кириллица" autocomplete="off">
+                <label for="firstName">Имя</label><input type="text" id="firstName" name="firstName" required pattern="[А-Яа-яЁё\s]{2,}" title="Минимум 2 буквы, только кириллица" autocomplete="off">
                 <div class="error">Пожалуйста, введите корректное имя (минимум 2 буквы, только кириллица)</div>
             </div>
 
@@ -118,8 +123,15 @@
 
     <script>
         // Инициализация Telegram WebApp
-        const tg = window.Telegram.WebApp;
-        tg.expand(); // Развернуть на весь экран
+        const tg = window.Telegram.WebApp;            tg.expand(); // Развернуть на весь экран
+
+        // Отключаем автозаполнение для всех полей
+        document.querySelectorAll('input').forEach(input => {
+            input.setAttribute('autocomplete', 'off');
+            input.setAttribute('autocorrect', 'off');
+            input.setAttribute('autocapitalize', 'off');
+            input.setAttribute('spellcheck', 'false');
+        });
 
         // Применяем цветовую схему Telegram
         document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
