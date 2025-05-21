@@ -76,16 +76,14 @@
 
         button:hover {
             opacity: 0.9;
-        }
-
-        .error {
+        }        .error {
             color: #ff3b30;
             font-size: 14px;
             margin-top: 5px;
             display: none;
         }
 
-        input:invalid + .error {
+        input.invalid + .error {
             display: block;
         }
     </style>
@@ -130,7 +128,18 @@
         document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
         document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
         document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
-        document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);        // Форматирование номера телефона
+        document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);        // Функция проверки валидности поля и показа ошибки
+        function validateField(input, pattern) {
+            if (pattern) {
+                const isValid = pattern.test(input.value);
+                input.classList.toggle('invalid', !isValid);
+                return isValid;
+            }
+            input.classList.toggle('invalid', !input.value);
+            return !!input.value;
+        }
+
+        // Форматирование номера телефона
         const phoneInput = document.getElementById('phone');
         phoneInput.addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, ''); // Удаляем все нецифровые символы
@@ -150,13 +159,13 @@
                     value = '380' + value;
                 }
             }
-            
-            // Добавляем + в начало
+              // Добавляем + в начало
             if (value) {
                 value = '+' + value;
             }
             
             e.target.value = value;
+            validateField(phoneInput, /^\+380\d{9}$/);
         });
 
         // Ограничение даты рождения
@@ -178,19 +187,17 @@
                 birthDate: document.getElementById('birthDate').value,
                 phone: document.getElementById('phone').value.trim(),
                 timestamp: new Date().toISOString() // Добавляем временную метку
-            };
+            };            // Валидация данных
+            const namePattern = /^[А-Яа-яЁё\s]{2,}$/;
+            const phonePattern = /^\+380\d{9}$/;
+            
+            const firstNameValid = validateField(document.getElementById('firstName'), namePattern);
+            const lastNameValid = validateField(document.getElementById('lastName'), namePattern);
+            const birthDateValid = validateField(document.getElementById('birthDate'));
+            const phoneValid = validateField(document.getElementById('phone'), phonePattern);
 
-            // Валидация данных
-            if (!formData.firstName.match(/^[А-Яа-яЁё\s]{2,}$/)) {
-                alert('Пожалуйста, введите корректное имя');
-                return false;
-            }
-
-            if (!formData.lastName.match(/^[А-Яа-яЁё\s]{2,}$/)) {
-                alert('Пожалуйста, введите корректную фамилию');
-                return false;
-            }            if (!formData.phone.match(/^\+380\d{9}$/)) {
-                alert('Пожалуйста, введите корректный номер телефона в формате +380XXXXXXXXX');
+            if (!firstNameValid || !lastNameValid || !birthDateValid || !phoneValid) {
+                // Ошибки будут показаны автоматически через CSS
                 return false;
             }
 
